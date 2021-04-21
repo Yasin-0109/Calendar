@@ -132,6 +132,7 @@ const Schedule = () => {
 
     function closeModal() {
         setIsOpen(false);
+        setIsEditing(false)
     }
 
     function openView() {
