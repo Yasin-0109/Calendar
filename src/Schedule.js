@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
-import {useForm} from "react-hook-form"
-import Modal from 'react-modal';
+import { Modal, Button, Form, Input, Select, Popover} from 'antd';
 import Calendar from '@toast-ui/react-calendar';
+import 'antd/dist/antd.css';
 import 'tui-calendar/dist/tui-calendar.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
@@ -9,23 +9,27 @@ import 'tui-time-picker/dist/tui-time-picker.css';
 const start = new Date();
 const end = new Date(new Date().setMinutes(start.getMinutes() + 30));
 
+const { Option } = Select;
+
+
 const schedules = [
     {
-        calendarId: "1",
+        calendarId: 1,
         category: "time",
         isVisible: true,
         title: "Study",
-        id: "1",
+        id: "2",
         body: "Test",
         start,
-        end
+        end,
+        isReadOnly: true
     },
     {
-        calendarId: "2",
+        calendarId: 2,
         category: "time",
         isVisible: true,
         title: "Meeting",
-        id: "2",
+        id: "1",
         body: "Description",
         start: new Date(new Date().setHours(start.getHours() + 1)),
         end: new Date(new Date().setHours(start.getHours() + 2))
@@ -46,9 +50,9 @@ const calendars = [
         id: "2",
         name: "Meeting",
         color: "white",
-        bgColor: "blue",
-        dragBgColor: "blue",
-        borderColor: "blue"
+        bgColor: "green",
+        dragBgColor: "green",
+        borderColor: "green"
     },
     {
         id: "3",
@@ -63,35 +67,61 @@ const calendars = [
 const Schedule = () => {
     const [view, setView] = useState('week')
     const [modalIsOpen, setIsOpen] = useState(false);
+    const [viewIsOpen, setViewIsOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentScheadule, setCurrentScheadule] = useState([])
+    const [currentId, setCurrentId] = useState('');
+    const [currentScheaduleId, setCurrentScheaduleId] = useState(0);
+    const [form] = Form.useForm();
 
-    const {register, handleSubmit} = useForm()
-
-    const onSubmit = data =>{
-        console.log(data)
+    const onSubmit = values => {
+        console.log(values)
 
         schedules.push({
-            calendarId: "3",
+            calendarId: schedules.length+1,
             category: "time",
             isVisible: true,
-            title: data.title,
-            id: "3",
-            body: data.description,
-            start: data.start,
-            end: data.end
+            title: values.Schedule.title,
+            id: values.Schedule.type,
+            body: values.Schedule.description,
+            start: values.Schedule.start,
+            end: values.Schedule.end
         })
 
         const schedule = {
-            calendarId: "3",
+            calendarId: schedules.length+1,
             category: "time",
             isVisible: true,
-            title: data.title,
-            id: "3",
-            body: data.description,
-            start: data.start,
-            end: data.end
+            title: values.Schedule.title,
+            id: values.Schedule.type,
+            body: values.Schedule.description,
+            start: values.Schedule.start,
+            end: values.Schedule.end
         }
 
         cal.current.calendarInst.createSchedules([schedule]);
+        form.resetFields();
+        closeModal();
+    }
+
+    const onUpdate = values => {
+            const update = {
+                category: "time",
+                isVisible: true,
+                title: values.Schedule.title,
+                id: values.Schedule.type,
+                body: values.Schedule.description,
+                start: values.Schedule.start,
+                end:  values.Schedule.end
+            }
+            cal.current.calendarInst.updateSchedule(
+                currentId,
+                currentScheaduleId,
+                update
+            )
+            setIsEditing(false)
+            form.resetFields();
+            closeModal();
     }
 
     const cal = useRef(null);
@@ -104,41 +134,23 @@ const Schedule = () => {
         setIsOpen(false);
     }
 
+    function openView() {
+        setViewIsOpen(true);
+    }
+
+    function closeView() {
+        setViewIsOpen(false);
+    }
+
 
     const onClickSchedule = useCallback((e) => {
         const { calendarId, id } = e.schedule;
         const el = cal.current.calendarInst.getElement(id, calendarId);
-
+        console.log(e.schedule)
+        setCurrentScheadule(e.schedule)
+        // openView();
         console.log(e, el.getBoundingClientRect());
     }, [])
-
-    const addTask = e =>{
-        schedules.push({
-            calendarId: "3",
-            category: "time",
-            isVisible: true,
-            title: "title",
-            id: "3",
-            body: "description",
-            start: start,
-            end: end
-        })
-
-        const schedule = {
-            calendarId: "3",
-            category: "time",
-            isVisible: true,
-            title: "title",
-            id: "3",
-            body: "description",
-            start: start,
-            end: end
-        }
-
-        cal.current.calendarInst.createSchedules([schedule]);
-
-        console.log()
-    }
 
     const onBeforeCreateSchedule = useCallback((scheduleData) => {
         console.log(scheduleData);
@@ -146,8 +158,6 @@ const Schedule = () => {
         openModal();
 
         console.log(schedules)
-
-       
     }, []);
 
     const onBeforeDeleteSchedule = useCallback((res) => {
@@ -160,14 +170,27 @@ const Schedule = () => {
 
     const onBeforeUpdateSchedule = useCallback((e) => {
         console.log(e);
+        setIsEditing(true)
+        
+        const { schedule } = e;
+        setCurrentId(schedule.id)
+        setCurrentScheaduleId(schedule.calendarId)
+        openModal();
 
-        const { schedule, changes } = e;
-
-        cal.current.calendarInst.updateSchedule(
-            schedule.id,
-            schedule.calendarId,
-            changes
-        );
+        // const update = {
+        //     category: "time",
+        //     isVisible: true,
+        //     title: "Meeting",
+        //     id: "1",
+        //     body: "Description",
+        //     start: new Date(new Date().setHours(start.getHours() + 2)),
+        //     end: new Date(new Date().setHours(start.getHours() + 3))
+        // }
+        // cal.current.calendarInst.updateSchedule(
+        //     schedule.id,
+        //     schedule.calendarId,
+        //     update
+        // );
     }, []);
 
     function _getFormattedTime(time) {
@@ -235,46 +258,78 @@ const Schedule = () => {
     return (
         <div className="App">
             <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={closeModal}
-                contentLabel="Example Modal"
-            >
-                <h2>Hello</h2>
-                <button onClick={closeModal}>close</button>
-                <div>I am a modal</div>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <input ref={register}
-                        placeholder="Title"
-                        type="text"
-                        name="title"
-                        required
-                    />
-                    <input ref={register}
-                        placeholder="Description"
-                        type="text"
-                        name="description"
-                        required
-                    />
-                    <input ref={register}
-                        placeholder="Start"
-                        type="datetime-local"
-                        name="start"
-                        required
-                    />
-                    <input ref={register}
-                        placeholder="End"
-                        type="datetime-local"
-                        name="end"
-                        required
-                    />
-                    <input ref={register}
-                        placeholder="First name"
-                        type="text"
-                        name="firstName"
-                        required
-                    />
-                    <button type="submit">submit</button>
-                </form>
+            visible={viewIsOpen}
+            onCancel={closeView}
+            onClick={closeView}
+            footer={[]}>
+                {currentScheadule[0]}
+            </Modal>
+            <Modal
+                visible={modalIsOpen}
+                onCancel={closeModal}
+                onClick={closeModal}
+                footer={[]}
+            >{ isEditing ? (
+                 <Form onFinish={onUpdate} layout="vertical" form={form}>
+                            <h3>Edit Task</h3>
+                            <Form.Item name={['Schedule', 'name']} label="Employee">
+                                <Input />
+                            </Form.Item>
+                            <Form.Item name={['Schedule', 'title']} label="Title">
+                                <Input />
+                            </Form.Item>
+                            <Form.Item name={['Schedule', 'type']} label="Type">
+                               <Select>
+                                    <Option value="1">Task</Option>
+                                    <Option value="2">Meeting</Option>
+                                    <Option value="3">Training</Option>
+                                </Select>
+                            </Form.Item>
+                            <Form.Item name={['Schedule', 'description']} label="Description">
+                                <Input />
+                            </Form.Item>
+                            <Form.Item name={['Schedule', 'start']} label="Start">
+                                 <Input type="datetime-local"/>
+                            </Form.Item>
+                            <Form.Item name={['Schedule', 'end']} label="End">
+                                <Input type="datetime-local"/>
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    Submit
+                                </Button>
+                            </Form.Item>
+                </Form>):(
+                <Form onFinish={onSubmit} layout="vertical" form={form}>
+                                                <h3>Add Task</h3>
+                <Form.Item name={['Schedule', 'name']} label="Employee">
+                    <Input />
+                </Form.Item>
+                <Form.Item name={['Schedule', 'title']} label="Title">
+                    <Input />
+                </Form.Item>
+                <Form.Item name={['Schedule', 'type']} label="Type">
+                   <Select>
+                        <Option value="1">Task</Option>
+                        <Option value="2">Meeting</Option>
+                        <Option value="3">Training</Option>
+                    </Select>
+                </Form.Item>
+                <Form.Item name={['Schedule', 'description']} label="Description">
+                    <Input />
+                </Form.Item>
+                <Form.Item name={['Schedule', 'start']} label="Start">
+                     <Input type="datetime-local"/>
+                </Form.Item>
+                <Form.Item name={['Schedule', 'end']} label="End">
+                    <Input type="datetime-local"/>
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Submit
+                    </Button>
+                </Form.Item>
+            </Form>)}
             </Modal>
             <h1>Welcome to TOAST Ui Calendar</h1>
             <button onClick={monthlyView}>Month</button>
