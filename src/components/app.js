@@ -7,7 +7,6 @@ import Schedule from '../Schedule';
 const app = () => {
     return (
         <div>
-        <Navbar/>
         <BrowserRouter >
         
         <Route path="/calendar" handler={Schedule} />

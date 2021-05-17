@@ -1,11 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Signup from './components/signup';
 import reportWebVitals from './reportWebVitals';
 import Schedule from './Schedule'
+import App from './components/app'
 
 ReactDOM.render(
   <React.StrictMode>
-    <Schedule />
+    <App></App>
+    <Signup />
   </React.StrictMode>,
   document.getElementById('root')
 );
