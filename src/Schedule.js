@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { Modal, Button, Form, Input, Select, Divider  } from 'antd';
+import { Modal, Button, Form, Input, Select, Divider, Row, Col } from 'antd';
 import schedules from './schedules'
 import calendars from './calendars'
 import Calendar from '@toast-ui/react-calendar';
+import { MinusCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import 'tui-calendar/dist/tui-calendar.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
@@ -35,7 +36,7 @@ const Schedule = () => {
         schedules.push({
             attendees: ["John", "Michael", "Mary"],
             comments: [],
-            calendarId:calendarId,
+            calendarId: calendarId,
             category: "time",
             isVisible: true,
             title: values.Schedule.title,
@@ -83,13 +84,13 @@ const Schedule = () => {
         }
 
         // Filter our datebase for the right value
-         
+
         const filter = schedules.filter(x => x.calendarId === currentScheadule.calendarId)
 
         // Update values in the database 
 
         filter.map(d => {
-            d.attendees =  attendees 
+            d.attendees = attendees
             d.title = values.Schedule.title
             d.body = values.Schedule.description
             d.start = values.Schedule.start
@@ -97,7 +98,7 @@ const Schedule = () => {
         })
 
         setCurrentScheadule(update)
-        
+
         cal.current.calendarInst.updateSchedule(
             currentId,
             currentScheaduleId,
@@ -111,7 +112,7 @@ const Schedule = () => {
     const comment = values => {
         const update = {
             attendees: currentScheadule.attendees,
-            comments: [...currentScheadule.comments,{author: "Yasin", comment: values.Schedule.comment}],
+            comments: [...currentScheadule.comments, { id: currentScheadule.comments.length + 1, author: "Yasin", comment: values.Schedule.comment }],
             category: "time",
             isVisible: true,
             title: currentScheadule.title,
@@ -124,7 +125,38 @@ const Schedule = () => {
         const filter = schedules.filter(x => x.calendarId === currentScheadule.calendarId)
 
         filter.map(d => {
-            d.comments = [...currentScheadule.comments,{author: "Yasin", comment: values.Schedule.comment}]
+            d.comments = [...currentScheadule.comments, { id: currentScheadule.comments.length + 1, author: "Yasin", comment: values.Schedule.comment }]
+        })
+
+        setCurrentScheadule(update)
+
+        cal.current.calendarInst.updateSchedule(
+            currentId,
+            currentScheaduleId,
+            update
+        )
+        setIsEditing(false)
+        form.resetFields();
+    }
+
+    const deleteComment = id => {
+
+        const update = {
+            attendees: currentScheadule.attendees,
+            comments: currentScheadule.comments.filter(x => x.id !== id),
+            category: "time",
+            isVisible: true,
+            title: currentScheadule.title,
+            id: currentScheadule.id,
+            body: currentScheadule.body,
+            start: currentScheadule.start,
+            end: currentScheadule.end
+        }
+
+        const filter = schedules.filter(x => x.calendarId === currentScheadule.calendarId)
+
+        filter.map(d => {
+            d.comments = currentScheadule.comments.filter(x => x.id !== id)
         })
 
         setCurrentScheadule(update)
@@ -186,7 +218,7 @@ const Schedule = () => {
 
     const deleteSchedule = () => {
         cal.current.calendarInst.deleteSchedule(currentId, currentScheaduleId);
-        const filter = schedules.filter(x => x.calendarId != currentScheaduleId);
+        const filter = schedules.filter(x => x.calendarId !== currentScheaduleId);
         closeView();
     }
 
@@ -287,10 +319,10 @@ const Schedule = () => {
                                 <Option value="Lars">Lars</Option>
                             </Select>
                         </Form.Item>
-                        <Form.Item name={['Schedule', 'title']} label="Title">
+                        <Form.Item name={['Schedule', 'title']} label="Title" rules={[{ required: true, message: 'Please input your title!' }]}>
                             <Input />
                         </Form.Item>
-                        <Form.Item name={['Schedule', 'type']} label="Type">
+                        <Form.Item name={['Schedule', 'type']} label="Type" rules={[{ required: true, message: 'Please input your type!' }]} >
                             <Select>
                                 <Option value="1">Task</Option>
                                 <Option value="2">Meeting</Option>
@@ -300,10 +332,10 @@ const Schedule = () => {
                         <Form.Item name={['Schedule', 'description']} label="Description">
                             <Input />
                         </Form.Item>
-                        <Form.Item name={['Schedule', 'start']} label="Start">
+                        <Form.Item name={['Schedule', 'start']} label="Start" rules={[{ required: true, message: 'Please input your start!' }]}>
                             <Input type="datetime-local" />
                         </Form.Item>
-                        <Form.Item name={['Schedule', 'end']} label="End">
+                        <Form.Item name={['Schedule', 'end']} label="End" rules={[{ required: true, message: 'Please input your end!' }]}>
                             <Input type="datetime-local" />
                         </Form.Item>
                         <Form.Item>
@@ -322,17 +354,29 @@ const Schedule = () => {
                         })}
                         <Divider style={{ borderColor: '#7cb305' }} dashed>Comments</Divider>
                         {currentScheadule.comments && currentScheadule.comments.map(item => {
-                            return <div>{item.author + ': ' + item.comment}</div>
+                            return <> <div>{item.author + ': ' + item.comment} <MinusCircleOutlined
+                                onClick={() => {
+                                    deleteComment(item.id)
+                                }}
+                            /></div>
+
+                            </>
                         })}
-                        <Form onFinish={comment} layout="vertical" form={form}>
-                            <Form.Item name={['Schedule', 'comment']} noStyle>
-                            <Input style={{width:'90%'}} />
-                            </Form.Item>
-                            <Form.Item>
-                                <Button style={{display:"inline-block", marginTop:25}} type="primary" htmlType="submit">
-                                    Send
+                        <Form onFinish={comment} layout="inline" form={form}>
+                            <Row>
+                                <Col span={12}>
+                                    <Form.Item name={['Schedule', 'comment']} rules={[{ required: true, message: 'Please input your comment!' }]}>
+                                        <Input />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={12}>
+                                    <Form.Item>
+                                        <Button type="primary" htmlType="submit">
+                                            Send
                                 </Button>
-                            </Form.Item>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
                         </Form>
                     </div>
                 )}
@@ -354,10 +398,10 @@ const Schedule = () => {
                             <Option value="Lars">Lars</Option>
                         </Select>
                     </Form.Item>
-                    <Form.Item name={['Schedule', 'title']} label="Title">
+                    <Form.Item name={['Schedule', 'title']} label="Title" rules={[{ required: true, message: 'Please input your title!' }]}>
                         <Input />
                     </Form.Item>
-                    <Form.Item name={['Schedule', 'type']} label="Type">
+                    <Form.Item name={['Schedule', 'type']} label="Type" rules={[{ required: true, message: 'Please input your type!' }]}>
                         <Select>
                             <Option value="Task">Task</Option>
                             <Option value="Meeting">Meeting</Option>
@@ -367,10 +411,10 @@ const Schedule = () => {
                     <Form.Item name={['Schedule', 'description']} label="Description">
                         <Input />
                     </Form.Item>
-                    <Form.Item name={['Schedule', 'start']} label="Start">
+                    <Form.Item name={['Schedule', 'start']} label="Start" rules={[{ required: true, message: 'Please input your start!' }]}>
                         <Input type="datetime-local" />
                     </Form.Item>
-                    <Form.Item name={['Schedule', 'end']} label="End">
+                    <Form.Item name={['Schedule', 'end']} label="End" rules={[{ required: true, message: 'Please input your end!' }]}>
                         <Input type="datetime-local" />
                     </Form.Item>
                     <Form.Item>
@@ -381,11 +425,11 @@ const Schedule = () => {
                 </Form>
             </Modal>
             <h1>Welcome to TOAST Ui Calendar</h1>
-            <Button style={{marginRight:5}} onClick={() => setView('month')}>Month</Button>
-            <Button style={{marginRight:5}} onClick={() => setView('week')}>Week</Button>
-            <Button style={{marginRight:5}} onClick={() => setView('day')}>Day</Button>
-            <Button style={{marginRight:5}} onClick={handleClickPrevButton}>Prev</Button>
-            <Button style={{marginRight:5}} onClick={handleClickNextButton}>Next</Button>
+            <Button style={{ marginRight: 5 }} onClick={() => setView('month')}>Month</Button>
+            <Button style={{ marginRight: 5 }} onClick={() => setView('week')}>Week</Button>
+            <Button style={{ marginRight: 5 }} onClick={() => setView('day')}>Day</Button>
+            <Button style={{ marginRight: 5 }} onClick={handleClickPrevButton}>Prev</Button>
+            <Button style={{ marginRight: 5 }} onClick={handleClickNextButton}>Next</Button>
             <Calendar
                 ref={cal}
                 height="1000px"

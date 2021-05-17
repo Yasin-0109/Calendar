@@ -4,8 +4,8 @@ const end = new Date(new Date().setMinutes(start.getMinutes() + 30));
 const schedules = [
     {
         attendees: ["John", "Michael", "Mary"],
-        comments: [{author: 'Michael', comment: 'Hello world'},
-        {author: 'Mary', comment: 'Whats up'}],
+        comments: [{id:1, author: 'Michael', comment: 'Hello world', timestamp: start},
+        {id:2,author: 'Mary', comment: 'Whats up',timestamp: end}],
         calendarId: 1,
         category: "time",
         isVisible: true,
