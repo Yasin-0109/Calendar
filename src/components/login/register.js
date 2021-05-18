@@ -1,14 +1,10 @@
 import React from "react";
 
 
-export class Register extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+export const Register = () => {
 
-  render() {
     return (
-      <div className="base-container" ref={this.props.containerRef}>
+      <div className="base-container" >
         <div className="header">Register</div>
         <div className="content">
           
@@ -34,5 +30,4 @@ export class Register extends React.Component {
         </div>
       </div>
     );
-  }
 }

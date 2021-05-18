@@ -1,13 +1,20 @@
-import React from "react";
+import React, {useState} from "react";
+import { Redirect } from "react-router-dom";
 
-export class Logins extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+export const Logins = () => {
 
-  render() {
+    const [loginStatus, setLoginStatus] = useState(false)
+
+
+    const login = () => {
+      setLoginStatus(true)
+      localStorage.setItem("token", "succesfully")
+    }
+    
+    if (loginStatus) return  <Redirect to={{pathname: "/"}} />;
+
     return (
-      <div className="base-container" ref={this.props.containerRef}>
+      <div className="base-container" >
         <div className="header">Login</div>
         <div className="content">
           <div className="form">
@@ -22,11 +29,10 @@ export class Logins extends React.Component {
           </div>
         </div>
         <div className="footer">
-          <button type="button" className="btn">
+          <button onClick={login} type="button" className="btn">
             Login
           </button>
         </div>
       </div>
     );
-  }
 }

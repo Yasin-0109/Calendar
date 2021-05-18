@@ -3,7 +3,6 @@ import { Modal, Button, Form, Input, Divider, Row, Col } from 'antd';
 import schedules from './schedules'
 import calendars from './calendars'
 import ScheaduleForm from './ScheaduleForm'
-import EditSchedule from './EditScheadule'
 import Calendar from '@toast-ui/react-calendar';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
@@ -190,7 +189,6 @@ const Schedule = () => {
 
     const onClickSchedule = useCallback((e) => {
         const { calendarId, id } = e.schedule;
-        const el = cal.current.calendarInst.getElement(id, calendarId);
 
         // filtering current schedule from database
 
@@ -203,7 +201,7 @@ const Schedule = () => {
         setCurrentScheaduleId(currentScheadule.calendarId)
         openView();
         console.log(currentScheadule);
-    }, [currentScheadule])
+    }, [])
 
     const onBeforeCreateSchedule = useCallback((scheduleData) => {
         console.log(scheduleData);
@@ -215,7 +213,6 @@ const Schedule = () => {
 
     const deleteSchedule = () => {
         cal.current.calendarInst.deleteSchedule(currentId, currentScheaduleId);
-        const filter = schedules.filter(x => x.calendarId !== currentScheaduleId);
         closeView();
     }
 
