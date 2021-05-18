@@ -1,18 +1,15 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { Modal, Button, Form, Input, Select, Divider, Row, Col } from 'antd';
+import { Modal, Button, Form, Input, Divider, Row, Col } from 'antd';
 import schedules from './schedules'
 import calendars from './calendars'
+import ScheaduleForm from './ScheaduleForm'
+import EditSchedule from './EditScheadule'
 import Calendar from '@toast-ui/react-calendar';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import 'tui-calendar/dist/tui-calendar.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
-
-const start = new Date();
-const end = new Date(new Date().setMinutes(start.getMinutes() + 30));
-
-const { Option } = Select;
 
 const Schedule = () => {
     const [view, setView] = useState('week')
@@ -242,46 +239,6 @@ const Schedule = () => {
 
     }, []);
 
-    function _getFormattedTime(time) {
-        const date = new Date(time);
-        const h = date.getHours();
-        const m = date.getMinutes();
-
-        return `${h}:${m}`;
-    }
-
-    function _getTimeTemplate(schedule, isAllDay) {
-        var html = [];
-
-        if (!isAllDay) {
-            html.push("<strong>" + _getFormattedTime(schedule.start) + "</strong> ");
-        }
-        if (schedule.isPrivate) {
-            html.push('<span class="calendar-font-icon ic-lock-b"></span>');
-            html.push(" Private");
-        } else {
-            if (schedule.isReadOnly) {
-                html.push('<span class="calendar-font-icon ic-readonly-b"></span>');
-            } else if (schedule.recurrenceRule) {
-                html.push('<span class="calendar-font-icon ic-repeat-b"></span>');
-            } else if (schedule.attendees.length) {
-                html.push('<span class="calendar-font-icon ic-user-b"></span>');
-            } else if (schedule.location) {
-                html.push('<span class="calendar-font-icon ic-location-b"></span>');
-            }
-            html.push(" " + schedule.title);
-        }
-
-        return html.join("");
-    }
-
-    const templates = {
-        time: function (schedule) {
-            console.log(schedule);
-            return _getTimeTemplate(schedule, false);
-        }
-    };
-
     const handleClickNextButton = () => {
         const calendarInstance = cal.current.getInstance();
         calendarInstance.next()
@@ -310,39 +267,7 @@ const Schedule = () => {
                 {isEditing ? (
                     <Form onFinish={onUpdate} layout="vertical" form={form}>
                         <h3>Edit Task</h3>
-                        <Form.Item name={['Schedule', 'name']} label="Employee">
-                            <Select mode="multiple">
-                                <Option value="John">John</Option>
-                                <Option value="Michael">Michael</Option>
-                                <Option value="Mary">Mary</Option>
-                                <Option value="Susan">Susan</Option>
-                                <Option value="Lars">Lars</Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item name={['Schedule', 'title']} label="Title" rules={[{ required: true, message: 'Please input your title!' }]}>
-                            <Input />
-                        </Form.Item>
-                        <Form.Item name={['Schedule', 'type']} label="Type" rules={[{ required: true, message: 'Please input your type!' }]} >
-                            <Select>
-                                <Option value="1">Task</Option>
-                                <Option value="2">Meeting</Option>
-                                <Option value="3">Training</Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item name={['Schedule', 'description']} label="Description">
-                            <Input />
-                        </Form.Item>
-                        <Form.Item name={['Schedule', 'start']} label="Start" rules={[{ required: true, message: 'Please input your start!' }]}>
-                            <Input type="datetime-local" />
-                        </Form.Item>
-                        <Form.Item name={['Schedule', 'end']} label="End" rules={[{ required: true, message: 'Please input your end!' }]}>
-                            <Input type="datetime-local" />
-                        </Form.Item>
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit">
-                                Submit
-                                </Button>
-                        </Form.Item>
+                        <ScheaduleForm />
                     </Form>) : (
                     <div>
                         <h3>Title: {currentScheadule.title}</h3>
@@ -365,7 +290,7 @@ const Schedule = () => {
                         <Form onFinish={comment} layout="inline" form={form}>
                             <Row>
                                 <Col span={12}>
-                                    <Form.Item name={['Schedule', 'comment']} rules={[{ required: true, message: 'Please input your comment!' }]}>
+                                    <Form.Item name={['Schedule', 'comment']}>
                                         <Input />
                                     </Form.Item>
                                 </Col>
@@ -389,39 +314,7 @@ const Schedule = () => {
             >
                 <Form onFinish={onSubmit} layout="vertical" form={form}>
                     <h3>Add Task</h3>
-                    <Form.Item name={['Schedule', 'name']} label="Employee">
-                        <Select mode="multiple">
-                            <Option value="John">John</Option>
-                            <Option value="Michael">Michael</Option>
-                            <Option value="Mary">Mary</Option>
-                            <Option value="Susan">Susan</Option>
-                            <Option value="Lars">Lars</Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item name={['Schedule', 'title']} label="Title" rules={[{ required: true, message: 'Please input your title!' }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name={['Schedule', 'type']} label="Type" rules={[{ required: true, message: 'Please input your type!' }]}>
-                        <Select>
-                            <Option value="Task">Task</Option>
-                            <Option value="Meeting">Meeting</Option>
-                            <Option value="Training">Training</Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item name={['Schedule', 'description']} label="Description">
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name={['Schedule', 'start']} label="Start" rules={[{ required: true, message: 'Please input your start!' }]}>
-                        <Input type="datetime-local" />
-                    </Form.Item>
-                    <Form.Item name={['Schedule', 'end']} label="End" rules={[{ required: true, message: 'Please input your end!' }]}>
-                        <Input type="datetime-local" />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                    </Button>
-                    </Form.Item>
+                    <ScheaduleForm />
                 </Form>
             </Modal>
             <h1>Welcome to TOAST Ui Calendar</h1>
@@ -436,7 +329,6 @@ const Schedule = () => {
                 view={view}
                 useCreationPopup={false}
                 useDetailPopup={false}
-                template={templates}
                 calendars={calendars}
                 schedules={schedules}
                 onClickSchedule={onClickSchedule}
