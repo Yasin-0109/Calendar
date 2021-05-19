@@ -25,7 +25,7 @@ const Navbar = () => {
                 </Menu.Item>
              <Menu.Item key="2" icon={<FileDoneOutlined />}>
                     <span className="nav-text">Calendar</span>
-                    <Link to="/calendar" />
+                    <Link to="/" />
                 </Menu.Item>
                 <Menu.Item key="3" icon={<LogoutOutlined />}
                 >
@@ -36,6 +36,7 @@ const Navbar = () => {
                 >
                     <p style={{ display: 'inline-block', marginRight: '5px' }}>Welcome {localStorage.getItem("user")}</p>
                     <Avatar icon={<UserOutlined />} />
+                    <Link to="/profile"/>
                 </Menu.Item>
             </Menu>
         </nav>

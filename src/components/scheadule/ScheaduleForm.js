@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Form, Input, Select } from 'antd';
-import schedules from './schedules'
 
 const { Option } = Select;
 

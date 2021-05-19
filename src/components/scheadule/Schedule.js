@@ -247,7 +247,7 @@ const Schedule = () => {
     };
 
     return (
-        <div className="App">
+        <div className="Schedule">
             <Modal
                 visible={viewIsOpen}
                 onCancel={closeView}

@@ -3,6 +3,7 @@ import { Route } from "react-router-dom"
 import { Layout } from "antd";
 import NavBar from "./Navbar";
 import Scheadule from "../scheadule/Schedule"
+import { profile } from "../profile";
 
 function App() {
   return (
@@ -10,7 +11,8 @@ function App() {
       <NavBar />
       <Layout>
         <Layout.Content>
-        <Route exact path="/calendar" component={Scheadule} />
+        <Route exact path="/" component={Scheadule} />
+        <Route exact path="/profile" component={profile} />
         </Layout.Content>
       </Layout>
     </div>
