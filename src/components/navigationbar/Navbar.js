@@ -24,8 +24,8 @@ const Navbar = () => {
                     <Link to="/" />
                 </Menu.Item>
              <Menu.Item key="2" icon={<FileDoneOutlined />}>
-                    <span className="nav-text">Calendar</span>
-                    <Link to="/" />
+                    <span className="nav-text">Employees</span>
+                    <Link to="/employees" />
                 </Menu.Item>
                 <Menu.Item key="3" icon={<LogoutOutlined />}
                 >

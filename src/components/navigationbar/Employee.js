@@ -1,5 +1,5 @@
 import React from 'react'
-import NavLayout from '../navigationbar/NavLayout'
+import NavLayout from './NavLayout'
 import { Switch } from 'react-router-dom';
 
 export default function Employee() {

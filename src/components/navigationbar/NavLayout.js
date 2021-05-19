@@ -4,6 +4,8 @@ import { Layout } from "antd";
 import NavBar from "./Navbar";
 import Scheadule from "../scheadule/Schedule"
 import { profile } from "../profile";
+import EmployeeList from "../profile/EmployeeList";
+import TrainningList from "../profile/TrainingList";
 
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
       <Layout>
         <Layout.Content>
         <Route exact path="/" component={Scheadule} />
+        <Route exact path="/employees" component={EmployeeList} />
+        <Route exact path="/employees/:name" component={({match}) => (<TrainningList name = {match.params.name}/> )}/>
         <Route exact path="/profile" component={profile} />
         </Layout.Content>
       </Layout>
