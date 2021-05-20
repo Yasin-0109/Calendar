@@ -16,10 +16,10 @@ const ScheaduleForm = () => {
                     <Option value="Lars">Lars</Option>
                 </Select>
             </Form.Item>
-            <Form.Item name={['Schedule', 'title']} label="Title" rules={[{ required: true, message: 'Please input your title!' }]}>
+            <Form.Item name={['Schedule', 'title']} label="Title">
                 <Input />
             </Form.Item>
-            <Form.Item name={['Schedule', 'type']} label="Type" rules={[{ required: true, message: 'Please input your type!' }]} >
+            <Form.Item name={['Schedule', 'type']} label="Type" >
                 <Select>
                     <Option value="1">Task</Option>
                     <Option value="2">Meeting</Option>
@@ -29,10 +29,10 @@ const ScheaduleForm = () => {
             <Form.Item name={['Schedule', 'description']} label="Description">
                 <Input />
             </Form.Item>
-            <Form.Item name={['Schedule', 'start']} label="Start" rules={[{ required: true, message: 'Please input your start!' }]}>
+            <Form.Item name={['Schedule', 'start']} label="Start">
                 <Input type="datetime-local" />
             </Form.Item>
-            <Form.Item name={['Schedule', 'end']} label="End" rules={[{ required: true, message: 'Please input your end!' }]}>
+            <Form.Item name={['Schedule', 'end']} label="End" >
                 <Input type="datetime-local" />
             </Form.Item>
             <Form.Item>

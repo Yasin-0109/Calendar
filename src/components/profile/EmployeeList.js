@@ -83,7 +83,7 @@ class EmployeeList extends React.Component {
         this.setState({
             visible: true,
             content: false,
-            drawerTitle: 'Add Company'
+            drawerTitle: 'Add Employee'
         });
     }
 
@@ -103,7 +103,7 @@ class EmployeeList extends React.Component {
                     width={500}
                 >
                         <Form onFinish={this.submit} ref={this.formRef} layout="vertical">
-                            <Form.Item name={['Company', 'name']} label="Company name">
+                            <Form.Item name={['Employee', 'name']} label="Company name">
                                 <Input />
                             </Form.Item>
                             <Form.Item>
